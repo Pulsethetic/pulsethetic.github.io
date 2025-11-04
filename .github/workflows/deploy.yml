@@ -1,0 +1,60 @@
+name: Deploy AstroPaper to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Permisos necesarios para el despliegue de GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ----------------------------------------------------
+      # 1. Configuración del Entorno (Similar a tu CI)
+      # ----------------------------------------------------
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # Usamos la versión que Codespaces usa (v20)
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ----------------------------------------------------
+      # 2. Construcción del Sitio (Astro run build)
+      # ----------------------------------------------------
+      - name: Build Astro project
+        run: pnpm run build
+      
+      # ----------------------------------------------------
+      # 3. Despliegue Final (Publicación)
+      # ----------------------------------------------------
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # El artefacto que se sube es la carpeta 'dist' que crea Astro.
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist' 
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
