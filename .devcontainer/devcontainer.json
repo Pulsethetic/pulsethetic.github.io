@@ -1,0 +1,15 @@
+{
+  "name": "Pulsethetic Astro Dev",
+  // Usa una imagen base con Node.js LTS (v20)
+  "image": "mcr.microsoft.com/devcontainers/universal:latest",
+
+  "features": {
+    // Asegura que Node.js sea al menos v18 (preferiblemente v20)
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20" 
+    }
+  },
+
+  // Comandos que se ejecutan después de la creación
+  "postCreateCommand": "npm install"
+}
