@@ -1,8 +1,8 @@
 export const SITE = {
   website: "https://pulsethetic.github.io", // replace this with your deployed domain
-  author: "Sat Naing",
-  profile: "https://satnaing.dev/",
-  desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
+  author: "Milton Mazariegos",
+  profile: "www.linkedin.com/in/miltonmazariegos",
+  desc: "Algorithmic Aesthetics.",
   title: "Pulsethetic",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
