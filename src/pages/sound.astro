@@ -1,0 +1,97 @@
+---
+// CORRECCIÓN: 
+// Importamos los componentes que faltaban (Header y Footer)
+// y el Layout principal (con la ruta que tú encontraste).
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro"; // Asumiendo esta ruta
+import Footer from "../components/Footer.astro"; // Asumiendo esta ruta
+
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+// Lógica de filtrado (esto ya está correcto)
+const allPosts: CollectionEntry<"blog">[] = await getCollection("blog");
+const soundPosts = allPosts
+  .filter(post => 
+    post.data.tags && 
+    post.data.tags.length > 0 && 
+    post.data.tags.map(tag => tag.toLowerCase()).includes("sound")
+  )
+  .sort((a, b) => b.data.pubDatetime.valueOf() - a.data.pubDatetime.valueOf());
+---
+
+<!-- 
+  CORRECCIÓN: 
+  Envolvemos todo en el <Layout>, 
+  e incluimos <Header /> y <Footer /> manualmente.
+-->
+<Layout title="Sound & Live Coding | Pulsethetic">
+  
+  <Header />
+
+  <main class="mx-auto max-w-3xl px-4 py-12">
+    
+    <h1 class="text-4xl font-extrabold tracking-tight mb-8 text-accent">
+      Sound & Live Coding: Algorithmic Beats
+    </h1>
+    
+    <p class="text-xl mb-10 text-foreground/90">
+      Mi espacio de experimentación donde el código no solo ejecuta, sino que actúa como instrumento.
+      Todo el sonido es generado, secuenciado y transformado en tiempo real con sintaxis.
+    </p>
+
+    <section class="space-y-16">
+      {
+        soundPosts.length === 0 ? (
+          <p class="text-lg text-foreground/70">Aún no hay sesiones de Live Coding publicadas...</p>
+        ) : (
+          soundPosts.map(post => {
+            let imgSrc: string | undefined = undefined;
+            if (post.data.ogImage) {
+              if (typeof post.data.ogImage === 'string') {
+                imgSrc = post.data.ogImage; 
+              } else {
+                imgSrc = post.data.ogImage.src; 
+              }
+            }
+
+            return (
+              <article>
+                <a href={`/posts/${post.id}/`} class="group grid gap-4 sm:grid-cols-3 sm:gap-6">
+                  
+                  {imgSrc && (
+                    <div class="sm:col-span-1">
+                      <img 
+                        src={imgSrc} 
+                        alt={post.data.title} 
+                        class="rounded-lg shadow-md aspect-video object-cover transition-transform duration-300 group-hover:scale-105" 
+                      />
+                    </div>
+                  )}
+                  
+                  <div class:list={["sm:col-span-2", { "sm:col-span-3": !imgSrc }]}>
+                    <h2 class="text-3xl font-semibold mb-2 text-accent group-hover:underline">
+                      {post.data.title}
+                    </h2>
+                    <p class="mb-3 text-foreground/90">{post.data.description}</p>
+                    <span class="text-sm text-foreground/70">
+                      Publicado el: 
+                      {post.data.pubDatetime.toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                </a>
+              </article>
+            );
+          })
+        )
+      }
+    </section>
+  </main>
+
+  <Footer />
+
+</Layout>
