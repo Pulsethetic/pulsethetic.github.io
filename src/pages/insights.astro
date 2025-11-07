@@ -1,0 +1,96 @@
+---
+// Importamos los componentes y el Layout (con la ruta que funciona)
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro"; 
+import Footer from "../components/Footer.astro"; 
+
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+// Lógica de filtrado
+const allPosts: CollectionEntry<"blog">[] = await getCollection("blog");
+
+// *** CAMBIO: Renombrado y filtrado por "insights" ***
+const insightsPosts = allPosts
+  .filter(post => 
+    post.data.tags && 
+    post.data.tags.length > 0 && 
+    post.data.tags.map(tag => tag.toLowerCase()).includes("insights")
+  )
+  .sort((a, b) => b.data.pubDatetime.valueOf() - a.data.pubDatetime.valueOf());
+---
+
+<!-- *** CAMBIO: Título de la página *** -->
+<Layout title="Insights: IA & Tech | Pulsethetic">
+  
+  <Header />
+
+  <main class="mx-auto max-w-3xl px-4 py-12">
+    
+    <!-- *** CAMBIO: Títulos y descripción *** -->
+    <h1 class="text-4xl font-extrabold tracking-tight mb-8 text-accent">
+      Insights: IA, Tech & Estética
+    </h1>
+    
+    <p class="text-xl mb-10 text-foreground/90">
+      Reflexiones sobre la intersección de la inteligencia artificial, la ingeniería de software
+      y la estética del código que define la era digital.
+    </p>
+
+    <section class="space-y-16">
+      {
+        // *** CAMBIO: Variable y texto de "vacío" ***
+        insightsPosts.length === 0 ? (
+          <p class="text-lg text-foreground/70">Aún no hay reflexiones publicadas...</p>
+        ) : (
+          // *** CAMBIO: Variable ***
+          insightsPosts.map(post => {
+            let imgSrc: string | undefined = undefined;
+            if (post.data.ogImage) {
+              if (typeof post.data.ogImage === 'string') {
+                imgSrc = post.data.ogImage; 
+              } else {
+                imgSrc = post.data.ogImage.src; 
+              }
+            }
+
+            return (
+              <article>
+                <a href={`/posts/${post.id}/`} class="group grid gap-4 sm:grid-cols-3 sm:gap-6">
+                  
+                  {imgSrc && (
+                    <div class="sm:col-span-1">
+                      <img 
+                        src={imgSrc} 
+                        alt={post.data.title} 
+                        class="rounded-lg shadow-md aspect-video object-cover transition-transform duration-300 group-hover:scale-105" 
+                      />
+                    </div>
+                  )}
+                  
+                  <div class:list={["sm:col-span-2", { "sm:col-span-3": !imgSrc }]}>
+                    <h2 class="text-3xl font-semibold mb-2 text-accent group-hover:underline">
+                      {post.data.title}
+                    </h2>
+                    <p class="mb-3 text-foreground/90">{post.data.description}</p>
+                    <span class="text-sm text-foreground/70">
+                      Publicado el: 
+                      {post.data.pubDatetime.toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                </a>
+              </article>
+            );
+          })
+        )
+      }
+    </section>
+  </main>
+
+  <Footer />
+
+</Layout>
