@@ -1,24 +1,64 @@
 ---
 import { getCollection } from "astro:content";
-import Main from "@/layouts/Main.astro";
-import Layout from "@/layouts/Layout.astro";
-import Tag from "@/components/Tag.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import getUniqueTags from "@/utils/getUniqueTags";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import Layout from "../../layouts/Layout.astro"; // Usamos Layout.astro
 import { SITE } from "@/config";
 
+// 1. Obtener todos los posts
 const posts = await getCollection("blog");
 
-let tags = getUniqueTags(posts);
+// 2. Extraer etiquetas únicas y contar cuántos posts tiene cada una
+const tags = posts
+  .flatMap(post => post.data.tags)
+  .filter(Boolean)
+  .reduce((acc, tag) => {
+    const currCount = acc[tag] || 0;
+    return {
+      ...acc,
+      [tag]: currCount + 1,
+    };
+  }, {} as Record<string, number>);
+
+const tagsList = Object.entries(tags).sort((a, b) => b[1] - a[1]);
 ---
 
 <Layout title={`Tags | ${SITE.title}`}>
   <Header />
-  <Main pageTitle="Tags" pageDesc="All the tags used in posts.">
-    <ul>
-      {tags.map(({ tag, tagName }) => <Tag {tag} {tagName} size="lg" />)}
+  
+  <main class="mx-auto max-w-3xl px-4 py-12">
+    
+    <h1 class="text-4xl font-extrabold tracking-tight mb-8 text-accent">
+      Exploración por Tópicos
+    </h1>
+    
+    <p class="text-xl mb-10 text-foreground/90">
+      Navega a través de los hilos conductores de Pulsethetic. 
+      Desde la sintaxis pura hasta la generación de sonido.
+    </p>
+
+    <!-- Grid de Tags -->
+    <ul class="flex flex-wrap gap-4">
+      {tagsList.map(([tag, count]) => (
+        <li class="flex-grow sm:flex-grow-0">
+          <a
+            href={`/tags/${tag.toLowerCase()}/`}
+            class="group flex items-center justify-between gap-3 px-6 py-3 
+                   bg-muted/20 border border-foreground/10 rounded-lg 
+                   transition-all duration-300 
+                   hover:border-accent hover:bg-accent/5 hover:shadow-[0_0_15px_rgba(0,255,255,0.15)]"
+          >
+            <span class="text-lg font-medium text-foreground group-hover:text-accent transition-colors">
+              #{tag}
+            </span>
+            <span class="text-xs font-mono bg-background/50 px-2 py-1 rounded text-foreground/60 group-hover:text-accent group-hover:bg-accent/10">
+              {count}
+            </span>
+          </a>
+        </li>
+      ))}
     </ul>
-  </Main>
+  </main>
+  
   <Footer />
 </Layout>

@@ -1,0 +1,95 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE } from "@/config";
+
+// Datos de tu Tech Stack para generar las etiquetas
+const techStack = {
+  "Languages": ["TypeScript", "JavaScript", "Go", "Python", "Haskell (Tidal)"],
+  "Frontend": ["React", "Astro", "Tailwind CSS", "Three.js / WebGL"],
+  "Backend": ["Node.js", "FastAPI", "PostgreSQL", "Docker"],
+  "Creative": ["TidalCycles", "Hydra", "SuperCollider", "Sonic Pi"]
+};
+---
+
+<Layout title={`About | ${SITE.title}`}>
+  
+  <Header />
+
+  <main class="mx-auto max-w-3xl px-4 py-12">
+    
+    <!-- Título Principal -->
+    <h1 class="text-4xl font-extrabold tracking-tight mb-8 text-accent">
+      About Pulsethetic
+    </h1>
+
+    <!-- Introducción / Bio -->
+    <div class="prose prose-lg dark:prose-invert mb-12 text-foreground/90">
+      <p class="text-xl font-medium leading-relaxed">
+        Soy un desarrollador Full Stack obsesionado con la intersección entre la lógica rigurosa 
+        y la expresión artística. <span class="text-accent">Pulsethetic</span> es mi identidad 
+        digital donde convergen el código limpio y el ritmo algorítmico.
+      </p>
+      
+      <p class="mt-4">
+        Mi trasfondo técnico (anteriormente bajo el alias <code>milrackdev</code>) se centra en 
+        arquitecturas escalables y rendimiento web. Sin embargo, creo que el código es más que 
+        herramientas; es un medio para la estética. Utilizo algoritmos no solo para resolver problemas, 
+        sino para generar música y visuales en tiempo real.
+      </p>
+    </div>
+
+    <hr class="border-dashed border-foreground/20 my-10" />
+
+    <!-- Sección Tech Stack -->
+    <section>
+      <h2 class="text-2xl font-bold mb-6 text-accent">Tech Stack & Herramientas</h2>
+      
+      <div class="grid gap-8 sm:grid-cols-2">
+        {Object.entries(techStack).map(([category, skills]) => (
+          <div class="bg-muted/30 p-5 rounded-lg border border-foreground/10 hover:border-accent/50 transition-colors">
+            <h3 class="text-lg font-semibold mb-3 text-foreground">{category}</h3>
+            <div class="flex flex-wrap gap-2">
+              {skills.map(skill => (
+                <span class="px-2 py-1 text-sm rounded bg-background border border-foreground/20 text-foreground/80 font-mono">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <hr class="border-dashed border-foreground/20 my-10" />
+
+    <!-- Sección de Contacto / Social -->
+    <section class="text-center py-8">
+      <h2 class="text-2xl font-bold mb-4">Conectemos</h2>
+      <p class="mb-6 text-foreground/80">
+        Siempre abierto a colaboraciones sobre Live Coding, IA Generativa o Desarrollo Web.
+      </p>
+      
+      <div class="flex justify-center gap-4">
+        <a 
+          href="https://github.com/TU_USUARIO" 
+          target="_blank"
+          class="px-6 py-2 rounded-full bg-accent text-background font-bold hover:opacity-90 transition-opacity"
+        >
+          GitHub
+        </a>
+        <a 
+          href="mailto:tu-email@ejemplo.com" 
+          class="px-6 py-2 rounded-full border border-accent text-accent font-bold hover:bg-accent/10 transition-colors"
+        >
+          Email
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+
+</Layout>
